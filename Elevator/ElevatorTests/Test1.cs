@@ -13,7 +13,7 @@ namespace ElevatorTests
 {
     public class Test1
     {
-        private readonly Brains _brains = new Brains(1);
+        readonly Brains _brains = new Brains(10);
 
         [Test]
         public void Execute()
@@ -21,7 +21,7 @@ namespace ElevatorTests
             this
                 .Given(_ => this.PassengerSummonsElevatorOnGroundFloor())
                 .And(_ => this.WaitUntilElevatorReachesFloor(0))
-                .And(_ => this.PassengerChoosesLevel5())
+                .And(_ => this.PassengerChoosesFloor5())
                 .When(_ => this.WaitUntilElevatorReachesFloor(5))
                 .Then(_ => this.ElevatorShouldHavePerformedStepsInOrder())
                 .BDDfy();
@@ -31,9 +31,10 @@ namespace ElevatorTests
         {
             _brains.ExecutedFloors.Dequeue().ShouldBe(0);
             _brains.ExecutedFloors.Dequeue().ShouldBe(5);
+            _brains.ExecutedFloors.ShouldBeEmpty();
         }
 
-        private void PassengerChoosesLevel5()
+        private void PassengerChoosesFloor5()
         {
             _brains.EnqueueFloorRequest(5);
         }

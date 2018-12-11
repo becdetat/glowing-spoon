@@ -19,15 +19,23 @@ namespace Elevator
             _commands.Enqueue(floor);
         }
 
-        public void MoveToNextFloor()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>True if a command was executed, false otherwise</returns>
+        public bool MoveToNextFloor()
         {
-            if (_commands.Count == 0) return;
+            if (_commands.Count == 0) return false;
 
             // naive implementation
             var nextFloor = _commands.Dequeue();
 
+            if (nextFloor == CurrentFloor) return true;
+
             ExecutedFloors.Enqueue(nextFloor);
             CurrentFloor = nextFloor;
+
+            return true;
         }
     }
 }
