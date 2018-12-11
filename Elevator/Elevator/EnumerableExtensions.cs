@@ -4,7 +4,7 @@ using System.Linq;
 namespace Elevator
 {
     /// <summary>
-    ///     https://stackoverflow.com/a/15150493
+    /// https://stackoverflow.com/a/15150493
     /// </summary>
     public static class EnumerableExtensions
     {
