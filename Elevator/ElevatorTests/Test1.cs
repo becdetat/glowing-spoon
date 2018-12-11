@@ -1,55 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Elevator;
+﻿using Elevator;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Shouldly;
 using TestStack.BDDfy;
 
 namespace ElevatorTests
 {
-    public class Test1
+    public class Test1 : TestBase
     {
-        readonly Brains _brains = new Brains(10);
-
-        [Test]
+        [Test(Description = "Passenger summons lift on the ground floor. Once in chooses to go to level 5.")]
         public void Execute()
         {
+            Brains = new Brains(10);
             this
-                .Given(_ => this.PassengerSummonsElevatorOnGroundFloor())
-                .And(_ => this.WaitUntilElevatorReachesFloor(0))
-                .And(_ => this.PassengerChoosesFloor5())
-                .When(_ => this.WaitUntilElevatorReachesFloor(5))
-                .Then(_ => this.ElevatorShouldHavePerformedStepsInOrder())
+                .Given(x => x.PassengerSummonsElevatorOnFloor(0, DirectionOfTravel.Up))
+                .And(x => x.WaitUntilElevatorReachesFloor(0))
+                .And(x => x.PassengerChoosesFloor(5))
+                .When(x => x.WaitUntilElevatorReachesFloor(5))
+                .Then(x => x.ElevatorShouldHavePerformedStepsInOrder())
                 .BDDfy();
         }
 
         private void ElevatorShouldHavePerformedStepsInOrder()
         {
-            _brains.ExecutedFloors.Dequeue().ShouldBe(0);
-            _brains.ExecutedFloors.Dequeue().ShouldBe(5);
-            _brains.ExecutedFloors.ShouldBeEmpty();
-        }
-
-        private void PassengerChoosesFloor5()
-        {
-            _brains.EnqueueFloorRequest(5);
-        }
-
-        private void WaitUntilElevatorReachesFloor(int floor)
-        {
-            while (_brains.CurrentFloor != floor)
-            {
-                _brains.MoveToNextFloor();
-            }
-        }
-
-        private void PassengerSummonsElevatorOnGroundFloor()
-        {
-            _brains.EnqueueFloorRequest(0);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(0);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(5);
+            Brains.ExecutedFloors.ShouldBeEmpty();
         }
     }
 }

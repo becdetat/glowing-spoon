@@ -5,51 +5,32 @@ using TestStack.BDDfy;
 
 namespace ElevatorTests
 {
-    public class Test2
+    public class Test2 : TestBase
     {
-        private readonly Brains _brains = new Brains(0);
-
-        [Test]
+        [Test(Description =
+            "Passenger summons lift on level 6 to go down. Passenger on level 4 summons the lift to go down. They both choose L1.")]
         public void Execute()
         {
+            Brains = new Brains(0);
+
             this
-                .Given(_ => this.PassengerSummonsElevatorOnFloor(6))
-                .And(_ => this.PassengerSummonsElevatorOnFloor(4))
-                .And(_ => this.WaitUntilElevatorReachesFloor(6))
-                .And(_ => this.PassengerChoosesFloor(1))
-                .And(_ => this.WaitUntilElevatorReachesFloor(4))
-                .And(_ => this.PassengerChoosesFloor(1))
-                .When(_ => this.WaitUntilElevatorStops())
-                .Then(_ => this.ElevatorShouldHavePerformedStepsInOrder())
+                .Given(x => x.PassengerSummonsElevatorOnFloor(6, DirectionOfTravel.Down))
+                .And(x => x.PassengerSummonsElevatorOnFloor(4, DirectionOfTravel.Down))
+                .And(x => x.WaitUntilElevatorReachesFloor(4))
+                .And(x => x.PassengerChoosesFloor(1))
+                .And(x => x.WaitUntilElevatorReachesFloor(6))
+                .And(x => x.PassengerChoosesFloor(1))
+                .When(x => x.WaitUntilElevatorStops())
+                .Then(x => x.ElevatorShouldHavePerformedStepsInOrder())
                 .BDDfy();
-        }
-
-        private void PassengerSummonsElevatorOnFloor(int floor)
-        {
-            _brains.EnqueueFloorRequest(floor);
-        }
-
-        private void WaitUntilElevatorReachesFloor(int floor)
-        {
-            while (_brains.CurrentFloor != floor && _brains.MoveToNextFloor()) ;
-        }
-
-        private void PassengerChoosesFloor(int floor)
-        {
-            _brains.EnqueueFloorRequest(floor);
-        }
-
-        private void WaitUntilElevatorStops()
-        {
-            while (_brains.MoveToNextFloor()) ;
         }
 
         private void ElevatorShouldHavePerformedStepsInOrder()
         {
-            _brains.ExecutedFloors.Dequeue().ShouldBe(6);
-            _brains.ExecutedFloors.Dequeue().ShouldBe(4);
-            _brains.ExecutedFloors.Dequeue().ShouldBe(1);
-            _brains.ExecutedFloors.ShouldBeEmpty();
+            Brains.ExecutedFloors.Dequeue().ShouldBe(4);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(6);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(1);
+            Brains.ExecutedFloors.ShouldBeEmpty();
         }
     }
 }
