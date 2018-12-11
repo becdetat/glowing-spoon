@@ -52,6 +52,17 @@ namespace ElevatorTests
                 .BDDfy();
         }
 
+        [Test]
+        public void SummonRequestOnCurrentFloorUsesRequestedDirection()
+        {
+            Brains = new Brains(0);
+
+            this
+                .Given(x => x.PassengerSummonsElevatorOnFloor(0, DirectionOfTravel.Up))
+                .Then(x => x.InitialDirectionOfTravelShouldBe(DirectionOfTravel.Up))
+                .BDDfy();
+        }
+
         private void InitialDirectionOfTravelShouldBe(DirectionOfTravel directionOfTravel)
         {
             Brains.CurrentDirectionOfTravel.ShouldBe(directionOfTravel);

@@ -35,7 +35,10 @@ namespace Elevator
         {
             if (_requests.Count != 1) return;
 
-            CurrentDirectionOfTravel = _requests.First().Floor > CurrentFloor
+            var request = _requests.First();
+
+            if (request is SummonRequest summonRequest && summonRequest.Floor == CurrentFloor) CurrentDirectionOfTravel = summonRequest.DirectionOfTravel;
+            else CurrentDirectionOfTravel = _requests.First().Floor > CurrentFloor
                 ? DirectionOfTravel.Up
                 : DirectionOfTravel.Down;
         }
@@ -47,21 +50,22 @@ namespace Elevator
         {
             if (_requests.Count == 0) return false;
 
-            var orderedRequests = _requests
-                .OrderBy(x => Math.Abs(x.Floor - CurrentFloor))
-                .ToList();
-
-            var nextRequest = orderedRequests
-                .FirstOrDefault(x =>
+            var nextRequest = _requests
+                .Permute()
+                .OrderBy(x =>
                 {
-                    if (x.Floor == CurrentFloor) return true;
-                    if (x is SummonRequest && ((SummonRequest) x).DirectionOfTravel != CurrentDirectionOfTravel) return false;
-                    if (CurrentDirectionOfTravel == DirectionOfTravel.Down && x.Floor < CurrentFloor) return true;
-                    if (CurrentDirectionOfTravel == DirectionOfTravel.Up && x.Floor > CurrentFloor) return true;
+                    var permutation = x.ToList();
+                    var distanceTraveled = Math.Abs(CurrentFloor - permutation[0].Floor);
 
-                    return false;
+                    for (var i = 0; i < permutation.Count - 1; i++)
+                    {
+                        distanceTraveled += Math.Abs(permutation[i].Floor - permutation[i + 1].Floor);
+                    }
+
+                    return distanceTraveled;
                 })
-                ?? orderedRequests.First();
+                .First()
+                .First();
             
             _requests.Remove(nextRequest);
 

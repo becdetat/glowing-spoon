@@ -16,9 +16,7 @@ namespace ElevatorTests
             this
                 .Given(x => x.PassengerSummonsElevatorOnFloor(6, DirectionOfTravel.Down))
                 .And(x => x.PassengerSummonsElevatorOnFloor(4, DirectionOfTravel.Down))
-                .And(x => x.WaitUntilElevatorReachesFloor(4))
                 .And(x => x.PassengerChoosesFloor(1))
-                .And(x => x.WaitUntilElevatorReachesFloor(6))
                 .And(x => x.PassengerChoosesFloor(1))
                 .When(x => x.WaitUntilElevatorStops())
                 .Then(x => x.ElevatorShouldHavePerformedStepsInOrder())
@@ -27,9 +25,9 @@ namespace ElevatorTests
 
         private void ElevatorShouldHavePerformedStepsInOrder()
         {
+            Brains.ExecutedFloors.Dequeue().ShouldBe(1);
             Brains.ExecutedFloors.Dequeue().ShouldBe(4);
             Brains.ExecutedFloors.Dequeue().ShouldBe(6);
-            Brains.ExecutedFloors.Dequeue().ShouldBe(1);
             Brains.ExecutedFloors.ShouldBeEmpty();
         }
     }

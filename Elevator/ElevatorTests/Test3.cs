@@ -5,14 +5,14 @@ using TestStack.BDDfy;
 
 namespace ElevatorTests
 {
-    public class Test3
+    public class Test3 : TestBase
     {
-        private readonly Brains _brains = new Brains(0);
-
         [Test(Description =
             "Passenger 1 summons lift to go up from L2. Passenger 2 summons lift to go down from L4. Passenger 1 chooses to go to L6. Passenger 2 chooses to go to Ground Floor")]
         public void Execute()
         {
+            Brains = new Brains(0);
+
             this
                 .Given(x => x.PassengerSummonsElevatorOnFloor(2, DirectionOfTravel.Up))
                 .And(x => x.PassengerSummonsElevatorOnFloor(4, DirectionOfTravel.Down))
@@ -27,31 +27,11 @@ namespace ElevatorTests
 
         private void ElevatorShouldHavePerformedStepsInOrder()
         {
-            _brains.ExecutedFloors.Dequeue().ShouldBe(2);
-            _brains.ExecutedFloors.Dequeue().ShouldBe(6);
-            _brains.ExecutedFloors.Dequeue().ShouldBe(4);
-            _brains.ExecutedFloors.Dequeue().ShouldBe(0);
-            _brains.ExecutedFloors.ShouldBeEmpty();
-        }
-
-        private void PassengerSummonsElevatorOnFloor(int floor, DirectionOfTravel directionOfTravel)
-        {
-            _brains.EnqueueSummonRequest(floor, directionOfTravel);
-        }
-
-        private void WaitUntilElevatorReachesFloor(int floor)
-        {
-            while (_brains.CurrentFloor != floor && _brains.MoveToNextFloor()) ;
-        }
-
-        private void PassengerChoosesFloor(int floor)
-        {
-            _brains.EnqueueFloorRequest(floor);
-        }
-
-        private void WaitUntilElevatorStops()
-        {
-            while (_brains.MoveToNextFloor()) ;
+            Brains.ExecutedFloors.Dequeue().ShouldBe(2);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(4);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(6);
+            Brains.ExecutedFloors.Dequeue().ShouldBe(0);
+            Brains.ExecutedFloors.ShouldBeEmpty();
         }
     }
 }
