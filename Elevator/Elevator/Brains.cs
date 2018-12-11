@@ -14,33 +14,16 @@ namespace Elevator
         }
 
         public int CurrentFloor { get; private set; }
-        public DirectionOfTravel CurrentDirectionOfTravel { get; private set; }
         public Queue<int> ExecutedFloors { get; } = new Queue<int>();
 
         public void EnqueueFloorRequest(int floor)
         {
             _requests.Add(new FloorRequest(floor));
-
-            if (_requests.Count == 1) this.SetInitialDirectionOfTravel();
         }
 
         public void EnqueueSummonRequest(int floor, DirectionOfTravel directionOfTravel)
         {
             _requests.Add(new SummonRequest(floor, directionOfTravel));
-
-            if (_requests.Count == 1) this.SetInitialDirectionOfTravel();
-        }
-
-        private void SetInitialDirectionOfTravel()
-        {
-            if (_requests.Count != 1) return;
-
-            var request = _requests.First();
-
-            if (request is SummonRequest summonRequest && summonRequest.Floor == CurrentFloor) CurrentDirectionOfTravel = summonRequest.DirectionOfTravel;
-            else CurrentDirectionOfTravel = _requests.First().Floor > CurrentFloor
-                ? DirectionOfTravel.Up
-                : DirectionOfTravel.Down;
         }
 
         /// <summary>
